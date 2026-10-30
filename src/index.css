@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    
+    --color-ivory: #FDFBF7;
+    --color-champagne: #F5EFEB;
+    --color-sand: #EAE3D2;
+    --color-taupe: #8A7E72;
+    --color-gold: #C29B38;
+    --color-gold-light: #DFC27D;
+    --color-olive: #4E563E;
+    --color-olive-dark: #323827;
+    --color-charcoal: #1C1B1A;
+    --color-charcoal-muted: #5C5854;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-ivory);
+    color: var(--color-charcoal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: var(--font-serif);
+  }
+}
+
+.font-serif {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-sans {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* Custom delicate luxury scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5EFEB;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C29B38;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #A07E28;
+}
+
+/* Luxury selection color */
+::selection {
+  background-color: #E8D8B8;
+  color: #1C1B1A;
+}

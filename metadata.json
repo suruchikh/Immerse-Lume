@@ -1,0 +1,6 @@
+{
+  "name": "Immerse Lume — Luxury Home Fragrance",
+  "description": "Luxury home-fragrance brand showcase and product catalogue for Immerse Lume, featuring natural soy wax candles, reed diffusers, signature fragrances, and comprehensive admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
