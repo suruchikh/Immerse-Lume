@@ -50,7 +50,7 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onNavigate, onOpenEnquiry 
           <div className="lg:col-span-5">
             <div className="aspect-3/4 bg-[#EAE3D2] overflow-hidden shadow-xl border border-[#EAE3D2]">
               <img
-                src="/src/assets/images/hero_luxury_candle_interior_1793372721571.jpg"
+                src="/assets/images/hero_luxury_candle_interior_1793372721571.jpg"
                 alt="Immerse Lume Atmosphere"
                 className="w-full h-full object-cover"
               />
@@ -107,7 +107,7 @@ export const StoryPage: React.FC<StoryPageProps> = ({ onNavigate, onOpenEnquiry 
         {/* Narrative Image Banner */}
         <div className="relative aspect-21/9 w-full bg-[#1C1B1A] overflow-hidden shadow-xl">
           <img
-            src="/src/assets/images/hero_luxury_candle_interior_1793372721571.jpg"
+            src="/assets/images/hero_luxury_candle_interior_1793372721571.jpg"
             alt="Immerse Lume Interior"
             className="w-full h-full object-cover opacity-60"
           />

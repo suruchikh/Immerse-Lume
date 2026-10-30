@@ -18,39 +18,39 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
   onOpenEnquiry
 }) => {
   return (
-    <div className="space-y-24 md:space-y-36 pb-24 text-left">
+    <div className="space-y-16 sm:space-y-24 md:space-y-36 pb-24 text-left">
       {/* Header Banner */}
-      <section className="bg-[#1C1B1A] text-[#FDFBF7] py-20 md:py-28 border-b border-[#2D2A26]">
-        <div className="max-w-4xl mx-auto px-6 text-center space-y-4">
-          <span className="text-[11px] uppercase tracking-[0.3em] text-[#DFC27D] font-medium block">
+      <section className="bg-[#1C1B1A] text-[#FDFBF7] py-14 sm:py-20 md:py-28 border-b border-[#2D2A26]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-3 sm:space-y-4">
+          <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.3em] text-[#DFC27D] font-medium block">
             Olfactory Artistry
           </span>
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-normal text-white">
+          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-normal text-white">
             The Signature Fragrances
           </h1>
-          <p className="text-sm md:text-base text-[#EAE3D2] font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm md:text-base text-[#EAE3D2] font-light max-w-2xl mx-auto leading-relaxed px-2">
             Each fragrance is an olfactory landscape formulated with rare botanicals and essential extracts, designed to evolve gracefully through hours of gentle diffusion.
           </p>
         </div>
       </section>
 
       {/* Fragrance Deep Dives */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-28 md:space-y-36">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 space-y-16 sm:space-y-28 md:space-y-36">
         {fragrances.map((frag, index) => {
           const isEven = index % 2 === 0;
-          // Find products available in this fragrance
           const matchingProducts = products.filter((p) =>
             p.fragrances?.some((f) => f.toLowerCase().includes(frag.name.toLowerCase()))
           );
+          const fragImg = frag.image.replace('/src/assets/images/', '/assets/images/');
 
           return (
             <section
               key={frag.id}
               id={frag.slug}
-              className="scroll-mt-28 border-b border-[#EAE3D2] pb-24 last:border-b-0"
+              className="scroll-mt-24 border-b border-[#EAE3D2] pb-16 sm:pb-24 last:border-b-0"
             >
               <div
-                className={`grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center ${
+                className={`grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-center ${
                   isEven ? '' : 'lg:flex-row-reverse'
                 }`}
               >
@@ -58,44 +58,44 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
                 <div className={`lg:col-span-6 ${isEven ? 'lg:order-1' : 'lg:order-2'}`}>
                   <div className="relative aspect-4/3 bg-[#F5EFEB] overflow-hidden shadow-xl border border-[#EAE3D2]">
                     <img
-                      src={frag.image}
+                      src={fragImg}
                       alt={frag.name}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-4 left-4 bg-[#1C1B1A]/80 backdrop-blur-xs text-[#DFC27D] text-[10px] tracking-[0.24em] uppercase px-3 py-1 font-light">
+                    <div className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-[#1C1B1A]/85 backdrop-blur-xs text-[#DFC27D] text-[9px] sm:text-[10px] tracking-[0.24em] uppercase px-2.5 py-1 font-light">
                       Fragrance No. 0{index + 1}
                     </div>
                   </div>
                 </div>
 
                 {/* Fragrance Prose & Notes */}
-                <div className={`lg:col-span-6 space-y-6 ${isEven ? 'lg:order-2' : 'lg:order-1'}`}>
-                  <div className="space-y-2">
-                    <span className="text-[11px] uppercase tracking-[0.24em] text-[#C29B38] font-medium block">
+                <div className={`lg:col-span-6 space-y-4 sm:space-y-6 ${isEven ? 'lg:order-2' : 'lg:order-1'}`}>
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-[#C29B38] font-medium block">
                       {frag.subTitle}
                     </span>
-                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium text-[#1C1B1A]">
+                    <h2 className="font-serif text-2xl sm:text-4xl md:text-5xl font-medium text-[#1C1B1A]">
                       {frag.name}
                     </h2>
-                    <p className="font-serif italic text-lg sm:text-xl text-[#8A7E72]">
+                    <p className="font-serif italic text-base sm:text-xl text-[#8A7E72]">
                       "{frag.tagline}"
                     </p>
                   </div>
 
-                  <p className="text-sm text-[#4A4744] font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#4A4744] font-light leading-relaxed">
                     {frag.description}
                   </p>
 
                   {/* Notes Card */}
-                  <div className="p-6 bg-[#F5EFEB] border border-[#EAE3D2] space-y-3">
-                    <h4 className="text-[11px] uppercase tracking-[0.2em] font-medium text-[#1C1B1A] flex items-center gap-1.5">
+                  <div className="p-4 sm:p-6 bg-[#F5EFEB] border border-[#EAE3D2] space-y-3">
+                    <h4 className="text-[10px] sm:text-[11px] uppercase tracking-[0.2em] font-medium text-[#1C1B1A] flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-[#C29B38]" />
                       <span>Olfactory Architecture & Pyramid</span>
                     </h4>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-1 text-xs">
                       {frag.notes.top && (
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           <span className="text-[10px] uppercase tracking-wider text-[#8A7E72] block">
                             Top Notes
                           </span>
@@ -106,7 +106,7 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
                       )}
 
                       {frag.notes.heart && (
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           <span className="text-[10px] uppercase tracking-wider text-[#8A7E72] block">
                             Heart Notes
                           </span>
@@ -117,7 +117,7 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
                       )}
 
                       {frag.notes.base && (
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           <span className="text-[10px] uppercase tracking-wider text-[#8A7E72] block">
                             Base Notes
                           </span>
@@ -128,7 +128,7 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
                       )}
 
                       {frag.notes.floral && (
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           <span className="text-[10px] uppercase tracking-wider text-[#8A7E72] block">
                             Floral Profile
                           </span>
@@ -139,7 +139,7 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
                       )}
 
                       {frag.notes.woody && (
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           <span className="text-[10px] uppercase tracking-wider text-[#8A7E72] block">
                             Woody Profile
                           </span>
@@ -150,7 +150,7 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
                       )}
 
                       {frag.notes.overall && (
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           <span className="text-[10px] uppercase tracking-wider text-[#8A7E72] block">
                             Overall Mood
                           </span>
@@ -164,8 +164,8 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
 
                   {/* Matching Products available in this fragrance */}
                   {matchingProducts.length > 0 && (
-                    <div className="space-y-3 pt-2">
-                      <span className="text-[11px] uppercase tracking-[0.18em] text-[#8A7E72] font-medium block">
+                    <div className="space-y-2 pt-1">
+                      <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-[#8A7E72] font-medium block">
                         Vessels Available in {frag.name}:
                       </span>
                       <div className="flex flex-wrap gap-2">
@@ -173,7 +173,7 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
                           <button
                             key={p.id}
                             onClick={() => onSelectProduct(p)}
-                            className="px-3 py-1.5 bg-[#FDFBF7] hover:bg-[#1C1B1A] text-[#1C1B1A] hover:text-[#FDFBF7] text-xs border border-[#EAE3D2] transition-colors cursor-pointer flex items-center gap-1.5"
+                            className="px-3 py-2 bg-[#FDFBF7] hover:bg-[#1C1B1A] text-[#1C1B1A] hover:text-[#FDFBF7] text-xs border border-[#EAE3D2] transition-colors cursor-pointer flex items-center gap-1.5 min-h-[38px]"
                           >
                             <span>{p.name}</span>
                             <ArrowRight className="w-3 h-3" />
@@ -186,7 +186,7 @@ export const FragrancesPage: React.FC<FragrancesPageProps> = ({
                   <div className="pt-2">
                     <button
                       onClick={() => onOpenEnquiry(`Consultation for ${frag.name} fragrance`)}
-                      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-medium text-[#1C1B1A] hover:text-[#C29B38] border-b border-[#1C1B1A] pb-1 cursor-pointer"
+                      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-medium text-[#1C1B1A] hover:text-[#C29B38] border-b border-[#1C1B1A] pb-1 cursor-pointer min-h-[36px]"
                     >
                       <span>Request Sample Curation</span>
                       <ArrowRight className="w-3.5 h-3.5" />

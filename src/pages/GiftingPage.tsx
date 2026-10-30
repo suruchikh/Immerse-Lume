@@ -76,7 +76,7 @@ export const GiftingPage: React.FC<GiftingPageProps> = ({
           <div className="lg:col-span-6">
             <div className="aspect-4/3 bg-[#EAE3D2] overflow-hidden shadow-xl border border-[#EAE3D2]">
               <img
-                src="/src/assets/images/collection_gift_sets_1793372756741.jpg"
+                src="/assets/images/collection_gift_sets_1793372756741.jpg"
                 alt="Luxury Presentation Gifting Box"
                 className="w-full h-full object-cover"
               />

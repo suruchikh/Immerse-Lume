@@ -42,32 +42,32 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
   };
 
   return (
-    <div className="space-y-20 md:space-y-28 pb-24 text-left">
+    <div className="space-y-12 sm:space-y-20 md:space-y-28 pb-24 text-left">
       {/* Header Banner */}
-      <section className="bg-[#F5EFEB] border-b border-[#EAE3D2] py-20 md:py-24">
-        <div className="max-w-4xl mx-auto px-6 text-center space-y-4">
-          <span className="text-[11px] uppercase tracking-[0.28em] text-[#C29B38] font-medium block">
+      <section className="bg-[#F5EFEB] border-b border-[#EAE3D2] py-14 sm:py-20 md:py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-3 sm:space-y-4">
+          <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#C29B38] font-medium block">
             Private Concierge
           </span>
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-medium text-[#1C1B1A]">
+          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-medium text-[#1C1B1A]">
             Connect With Immerse Lume
           </h1>
-          <p className="text-sm md:text-base text-[#5C5854] font-light max-w-xl mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm md:text-base text-[#5C5854] font-light max-w-xl mx-auto leading-relaxed px-2">
             For bespoke catalogue requests, private retail consultations, interior projects, and corporate gifting commissions.
           </p>
         </div>
       </section>
 
       {/* Main Contact Grid */}
-      <section className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
           {/* Left Column: Direct Studio Details */}
-          <div className="lg:col-span-5 space-y-10">
-            <div className="space-y-3">
-              <span className="text-[11px] uppercase tracking-[0.22em] text-[#8A7E72] font-medium block">
+          <div className="lg:col-span-5 space-y-6 sm:space-y-10">
+            <div className="space-y-2.5">
+              <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.22em] text-[#8A7E72] font-medium block">
                 Brand Atelier
               </span>
-              <h2 className="font-serif text-3xl font-medium text-[#1C1B1A]">
+              <h2 className="font-serif text-2xl sm:text-3xl font-medium text-[#1C1B1A]">
                 The Concierge Desk
               </h2>
               <p className="text-xs text-[#5C5854] font-light leading-relaxed">
@@ -75,10 +75,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
               </p>
             </div>
 
-            <div className="space-y-6 border-t border-[#EAE3D2] pt-8 text-xs text-[#5C5854]">
+            <div className="space-y-4 sm:space-y-6 border-t border-[#EAE3D2] pt-6 sm:pt-8 text-xs text-[#5C5854]">
               {settings.contactEmail && (
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-[#F5EFEB] text-[#C29B38] border border-[#EAE3D2]">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="p-2.5 sm:p-3 bg-[#F5EFEB] text-[#C29B38] border border-[#EAE3D2] shrink-0">
                     <Mail className="w-4 h-4" />
                   </div>
                   <div>
@@ -87,7 +87,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
                     </span>
                     <a
                       href={`mailto:${settings.contactEmail}`}
-                      className="font-medium text-[#1C1B1A] hover:text-[#C29B38] transition-colors"
+                      className="font-medium text-[#1C1B1A] hover:text-[#C29B38] transition-colors break-all"
                     >
                       {settings.contactEmail}
                     </a>
@@ -96,8 +96,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
               )}
 
               {settings.contactPhone && (
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-[#F5EFEB] text-[#C29B38] border border-[#EAE3D2]">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="p-2.5 sm:p-3 bg-[#F5EFEB] text-[#C29B38] border border-[#EAE3D2] shrink-0">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
@@ -115,8 +115,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
               )}
 
               {settings.contactAddress && (
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-[#F5EFEB] text-[#C29B38] border border-[#EAE3D2]">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="p-2.5 sm:p-3 bg-[#F5EFEB] text-[#C29B38] border border-[#EAE3D2] shrink-0">
                     <MapPin className="w-4 h-4" />
                   </div>
                   <div>
@@ -131,8 +131,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
               )}
 
               {settings.instagramUrl && (
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-[#F5EFEB] text-[#C29B38] border border-[#EAE3D2]">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="p-2.5 sm:p-3 bg-[#F5EFEB] text-[#C29B38] border border-[#EAE3D2] shrink-0">
                     <Instagram className="w-4 h-4" />
                   </div>
                   <div>
@@ -153,7 +153,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
               )}
             </div>
 
-            <div className="p-6 bg-[#F5EFEB] border border-[#EAE3D2] space-y-2">
+            <div className="p-4 sm:p-6 bg-[#F5EFEB] border border-[#EAE3D2] space-y-1.5">
               <span className="text-[10px] uppercase tracking-widest text-[#C29B38] font-medium block">
                 Trade & Interior Designers
               </span>
@@ -164,16 +164,16 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
           </div>
 
           {/* Right Column: Contact Form */}
-          <div className="lg:col-span-7 bg-[#FDFBF7] border border-[#EAE3D2] p-8 md:p-12 shadow-sm">
-            <h3 className="font-serif text-2xl font-medium text-[#1C1B1A] mb-2">
+          <div className="lg:col-span-7 bg-[#FDFBF7] border border-[#EAE3D2] p-5 sm:p-8 md:p-12 shadow-sm">
+            <h3 className="font-serif text-2xl font-medium text-[#1C1B1A] mb-1.5">
               Send an Enquiry
             </h3>
-            <p className="text-xs text-[#8A7E72] mb-8 font-light">
+            <p className="text-xs text-[#8A7E72] mb-6 sm:mb-8 font-light">
               All messages are routed directly to our private concierge team.
             </p>
 
             {success ? (
-              <div className="py-12 text-center space-y-4 bg-[#F5EFEB] border border-[#EAE3D2] p-8">
+              <div className="py-10 text-center space-y-4 bg-[#F5EFEB] border border-[#EAE3D2] p-6 sm:p-8">
                 <CheckCircle2 className="w-12 h-12 text-[#C29B38] mx-auto" />
                 <h4 className="font-serif text-2xl font-medium text-[#1C1B1A]">
                   Thank You
@@ -183,13 +183,13 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
                 </p>
                 <button
                   onClick={() => setSuccess(false)}
-                  className="mt-4 px-6 py-2.5 bg-[#1C1B1A] text-white text-xs uppercase tracking-wider cursor-pointer"
+                  className="mt-4 px-6 py-3 min-h-[44px] bg-[#1C1B1A] text-white text-xs uppercase tracking-wider cursor-pointer"
                 >
                   Send Another Message
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
                 {error && (
                   <div className="p-3 bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0" />
@@ -207,11 +207,11 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. Lady Vivienne Sterling"
-                    className="w-full px-4 py-3 text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
+                    className="w-full px-4 py-3 text-base sm:text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[11px] uppercase tracking-[0.16em] font-medium text-[#1C1B1A] mb-1">
                       Email Address *
@@ -222,7 +222,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="vivienne@residence.com"
-                      className="w-full px-4 py-3 text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
+                      className="w-full px-4 py-3 text-base sm:text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
                     />
                   </div>
                   <div>
@@ -234,7 +234,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       placeholder="+91 98000 00000"
-                      className="w-full px-4 py-3 text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
+                      className="w-full px-4 py-3 text-base sm:text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
                     />
                   </div>
                 </div>
@@ -248,7 +248,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                     placeholder="e.g. Bespoke Wedding Favours or Corporate Suite"
-                    className="w-full px-4 py-3 text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
+                    className="w-full px-4 py-3 text-base sm:text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
                   />
                 </div>
 
@@ -258,18 +258,18 @@ export const ContactPage: React.FC<ContactPageProps> = ({ settings }) => {
                   </label>
                   <textarea
                     required
-                    rows={5}
+                    rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Please specify desired items, fragrance preferences, or quantities..."
-                    className="w-full px-4 py-3 text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
+                    className="w-full px-4 py-3 text-base sm:text-xs bg-[#F5EFEB] border border-[#EAE3D2] focus:outline-hidden focus:border-[#C29B38] transition-colors"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-[#1C1B1A] hover:bg-[#323827] text-[#FDFBF7] uppercase tracking-[0.2em] text-xs font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full min-h-[48px] py-4 bg-[#1C1B1A] hover:bg-[#323827] text-[#FDFBF7] uppercase tracking-[0.2em] text-xs font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 active:bg-[#323827]"
                 >
                   {loading ? (
                     <span>Submitting Message...</span>

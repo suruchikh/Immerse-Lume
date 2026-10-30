@@ -127,9 +127,42 @@ export default function App() {
     }
     init();
 
+    // Check search params and hash on initial mount
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const catParam = searchParams.get('category');
+      if (catParam) {
+        setCategoryFilter(decodeURIComponent(catParam));
+      }
+      if (window.location.hash) {
+        const hashId = window.location.hash.substring(1);
+        setTimeout(() => {
+          const el = document.getElementById(hashId);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      }
+    } catch (e) {
+      // Ignore URL parsing errors
+    }
+
     // Listen to popstate
     const handlePopState = () => {
-      setCurrentPath(window.location.pathname || '/');
+      const path = window.location.pathname || '/';
+      const searchParams = new URLSearchParams(window.location.search);
+      const catParam = searchParams.get('category');
+      if (catParam) {
+        setCategoryFilter(decodeURIComponent(catParam));
+      } else {
+        setCategoryFilter('All');
+      }
+      setCurrentPath(path);
+      if (window.location.hash) {
+        const hashId = window.location.hash.substring(1);
+        setTimeout(() => {
+          const el = document.getElementById(hashId);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -143,6 +176,22 @@ export default function App() {
       setCurrentPath(base);
       window.history.pushState({}, '', path);
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (path.includes('#')) {
+      const [base, hash] = path.split('#');
+      setCategoryFilter('All');
+      setCurrentPath(base || '/');
+      window.history.pushState({}, '', path);
+      setTimeout(() => {
+        const el = document.getElementById(hash);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 100);
       return;
     }
 
@@ -338,6 +387,26 @@ export default function App() {
 
         {currentPath === '/contact' && (
           <ContactPage settings={settings} />
+        )}
+
+        {!['/', '/story', '/collections', '/fragrances', '/gifting', '/contact'].includes(currentPath) && (
+          <div className="min-h-[60vh] flex flex-col items-center justify-center px-6 py-20 text-center space-y-6">
+            <span className="text-[11px] uppercase tracking-[0.3em] text-[#C29B38] font-medium">
+              404 · Sanctuary Unseen
+            </span>
+            <h1 className="font-serif text-3xl sm:text-5xl font-medium text-[#1C1B1A]">
+              Page Not Found
+            </h1>
+            <p className="text-xs sm:text-sm text-[#5C5854] font-light max-w-md mx-auto leading-relaxed">
+              The page or sanctuary you are seeking does not exist or has been relocated. We invite you to return to our curated home.
+            </p>
+            <button
+              onClick={() => handleNavigate('/')}
+              className="px-8 py-3.5 bg-[#1C1B1A] text-[#FDFBF7] hover:bg-[#323827] text-xs uppercase tracking-[0.2em] font-medium transition-colors cursor-pointer"
+            >
+              Return to Sanctuary
+            </button>
+          </div>
         )}
       </main>
 

@@ -8,7 +8,9 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) => {
-  const primaryImage = product.images?.[0] || '/src/assets/images/product_atelier_screw_jar_1793372739090.jpg';
+  const rawImage = product.images?.[0] || '/assets/images/product_atelier_screw_jar_1793372739090.jpg';
+  // Normalize path for both Vite dev and production build
+  const primaryImage = rawImage.replace('/src/assets/images/', '/assets/images/');
 
   return (
     <div
@@ -24,17 +26,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
         />
         {product.burnTime && (
-          <div className="absolute top-3 right-3 bg-[#1C1B1A]/80 backdrop-blur-xs text-[#EAE3D2] text-[10px] tracking-wider uppercase px-2 py-1 font-light">
+          <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 bg-[#1C1B1A]/85 backdrop-blur-xs text-[#EAE3D2] text-[9px] sm:text-[10px] tracking-wider uppercase px-2 py-0.5 sm:py-1 font-light">
             {product.burnTime}
           </div>
         )}
       </div>
 
       {/* Card Content */}
-      <div className="p-6 flex flex-col flex-1 justify-between space-y-4">
+      <div className="p-4 sm:p-6 flex flex-col flex-1 justify-between space-y-3 sm:space-y-4">
         <div className="space-y-1.5">
           {/* Category & Vessel metadata */}
-          <div className="flex items-center gap-2 text-[11px] text-[#8A7E72] tracking-[0.16em] uppercase">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] text-[#8A7E72] tracking-[0.16em] uppercase">
             <span>{product.category}</span>
             {product.weight && (
               <>
@@ -45,7 +47,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           </div>
 
           {/* Product Name */}
-          <h3 className="font-serif text-xl md:text-2xl font-medium text-[#1C1B1A] group-hover:text-[#C29B38] transition-colors leading-snug">
+          <h3 className="font-serif text-lg sm:text-xl md:text-2xl font-medium text-[#1C1B1A] group-hover:text-[#C29B38] transition-colors leading-snug">
             {product.name}
           </h3>
 
@@ -56,9 +58,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
         </div>
 
         {/* Available Fragrances and Specs summary */}
-        <div className="pt-2 border-t border-[#EAE3D2]/60 space-y-3">
+        <div className="pt-2 border-t border-[#EAE3D2]/60 space-y-2.5 sm:space-y-3">
           {product.fragrances?.length > 0 && (
-            <div className="text-[11px] text-[#8A7E72] flex items-center gap-1.5 truncate">
+            <div className="text-[10px] sm:text-[11px] text-[#8A7E72] flex items-center gap-1.5 truncate">
               <Sparkles className="w-3 h-3 text-[#C29B38] shrink-0" />
               <span className="truncate">
                 {product.fragrances.slice(0, 3).join(', ')}
@@ -68,7 +70,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onSelect }) =
           )}
 
           <div className="flex items-center justify-between pt-1">
-            <span className="text-[11px] uppercase tracking-[0.18em] text-[#1C1B1A] group-hover:text-[#C29B38] font-medium flex items-center gap-1.5 transition-colors">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-[#1C1B1A] group-hover:text-[#C29B38] font-medium flex items-center gap-1.5 transition-colors min-h-[36px]">
               <span>View Details</span>
               <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
             </span>
