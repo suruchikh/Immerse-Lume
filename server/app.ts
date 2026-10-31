@@ -673,6 +673,31 @@ export const app = express();
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+// CORS & Preflight handling for Vercel and custom domains
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Normalize URL for Vercel Serverless Function compatibility
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  if (
+    !req.url.startsWith('/api') &&
+    !req.url.startsWith('/uploads') &&
+    !req.url.startsWith('/assets') &&
+    !req.url.startsWith('/src') &&
+    req.url !== '/'
+  ) {
+    req.url = '/api' + (req.url.startsWith('/') ? req.url : '/' + req.url);
+  }
+  next();
+});
+
 // Static uploads & images serving
 app.use('/uploads', express.static(UPLOADS_DIR));
 app.use('/assets/images', express.static(path.resolve(__dirname, '../public/assets/images')));

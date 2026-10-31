@@ -21,6 +21,15 @@ import {
   fetchCurrentUser,
   removeAuthToken
 } from './services/api';
+import {
+  INITIAL_PRODUCTS,
+  INITIAL_COLLECTIONS,
+  INITIAL_FRAGRANCES,
+  INITIAL_SECTIONS,
+  INITIAL_GLOBAL_SETTINGS,
+  INITIAL_DESIGN_SETTINGS,
+  INITIAL_MEDIA
+} from './data/initialData';
 
 // Public Components
 import { AnnouncementBar } from './components/AnnouncementBar';
@@ -57,14 +66,14 @@ export default function App() {
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
   const [currentAdminTab, setCurrentAdminTab] = useState<string>('dashboard');
 
-  // Application Data State
-  const [products, setProducts] = useState<Product[]>([]);
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [fragrances, setFragrances] = useState<Fragrance[]>([]);
-  const [sections, setSections] = useState<PageSection[]>([]);
-  const [settings, setSettings] = useState<GlobalSettings | null>(null);
-  const [design, setDesign] = useState<DesignSettings | null>(null);
-  const [media, setMedia] = useState<MediaItem[]>([]);
+  // Application Data State - Pre-populated with luxury brand catalog
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [collections, setCollections] = useState<Collection[]>(INITIAL_COLLECTIONS);
+  const [fragrances, setFragrances] = useState<Fragrance[]>(INITIAL_FRAGRANCES);
+  const [sections, setSections] = useState<PageSection[]>(INITIAL_SECTIONS);
+  const [settings, setSettings] = useState<GlobalSettings>(INITIAL_GLOBAL_SETTINGS);
+  const [design, setDesign] = useState<DesignSettings>(INITIAL_DESIGN_SETTINGS);
+  const [media, setMedia] = useState<MediaItem[]>(INITIAL_MEDIA);
   const [enquiries, setEnquiries] = useState<ContactEnquiry[]>([]);
 
   // Auth State
@@ -80,49 +89,55 @@ export default function App() {
   const loadData = async (isAdmin = false) => {
     try {
       const [prodsData, colsData, fragsData, secsData, settingsData] = await Promise.all([
-        fetchProducts(isAdmin),
-        fetchCollections(isAdmin),
-        fetchFragrances(isAdmin),
-        fetchSections('home', isAdmin),
-        fetchSettings()
+        fetchProducts(isAdmin).catch(() => INITIAL_PRODUCTS),
+        fetchCollections(isAdmin).catch(() => INITIAL_COLLECTIONS),
+        fetchFragrances(isAdmin).catch(() => INITIAL_FRAGRANCES),
+        fetchSections('home', isAdmin).catch(() => INITIAL_SECTIONS),
+        fetchSettings().catch(() => ({ global: INITIAL_GLOBAL_SETTINGS, design: INITIAL_DESIGN_SETTINGS }))
       ]);
 
-      setProducts(prodsData);
-      setCollections(colsData);
-      setFragrances(fragsData);
-      setSections(secsData);
-      setSettings(settingsData.global);
-      setDesign(settingsData.design);
+      if (prodsData && prodsData.length > 0) setProducts(prodsData);
+      if (colsData && colsData.length > 0) setCollections(colsData);
+      if (fragsData && fragsData.length > 0) setFragrances(fragsData);
+      if (secsData && secsData.length > 0) setSections(secsData);
+      if (settingsData?.global) setSettings(settingsData.global);
+      if (settingsData?.design) setDesign(settingsData.design);
 
       // If admin, load media and enquiries
       if (isAdmin) {
         const [mediaData, enqsData] = await Promise.all([
-          fetchMedia().catch(() => []),
+          fetchMedia().catch(() => INITIAL_MEDIA),
           fetchEnquiries().catch(() => [])
         ]);
-        setMedia(mediaData);
-        setEnquiries(enqsData);
+        if (mediaData && mediaData.length > 0) setMedia(mediaData);
+        if (enqsData) setEnquiries(enqsData);
       }
     } catch (err) {
-      console.error('Failed to load application data:', err);
+      console.warn('Non-blocking background data sync notice:', err);
     }
   };
 
   useEffect(() => {
+    let isMounted = true;
+
+    // Safety timeout: dismiss luxury splash after 600ms so website never gets stuck
+    const splashTimer = setTimeout(() => {
+      if (isMounted) setInitialLoading(false);
+    }, 600);
+
     async function init() {
-      // Check auth token
       try {
         const user = await fetchCurrentUser();
-        if (user?.user) {
+        if (user?.user && isMounted) {
           setAdminUser(user.user);
           await loadData(true);
-        } else {
+        } else if (isMounted) {
           await loadData(false);
         }
       } catch (err) {
-        await loadData(false);
+        if (isMounted) await loadData(false);
       } finally {
-        setInitialLoading(false);
+        if (isMounted) setInitialLoading(false);
       }
     }
     init();
@@ -165,7 +180,12 @@ export default function App() {
       }
     };
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(splashTimer);
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, []);
 
   const handleNavigate = (path: string) => {
@@ -213,9 +233,9 @@ export default function App() {
     loadData(false);
   };
 
-  if (initialLoading || !settings || !design) {
+  if (initialLoading) {
     return (
-      <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center space-y-4">
+      <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center space-y-4 transition-opacity duration-500">
         <span className="font-serif text-2xl tracking-[0.24em] uppercase text-[#1C1B1A]">
           IMMERSE LUME
         </span>
