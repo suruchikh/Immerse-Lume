@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { MediaItem } from '../../types';
 import { uploadMedia, deleteMedia } from '../../services/api';
-import { Upload, Trash2, Copy, Check, Search, Filter, Image as ImageIcon, Video, Folder } from 'lucide-react';
+import { optimizeDeviceImage } from '../../utils/imageOptimizer';
+import { Upload, Trash2, Copy, Check, Search, Image as ImageIcon, Video, RefreshCw, X, FolderOpen } from 'lucide-react';
 
 interface AdminMediaLibraryProps {
   media: MediaItem[];
@@ -12,38 +13,83 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({ media, onR
   const [selectedFolder, setSelectedFolder] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<string>('');
+  const [dragActive, setDragActive] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [previewMedia, setPreviewMedia] = useState<MediaItem | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const folders = ['All', 'Editorial', 'Products', 'Fragrances', 'Gifting', 'General'];
+  const folders = ['All', 'Editorial', 'Products', 'Fragrances', 'Collections', 'Gifting', 'General'];
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleUploadFiles = async (files: FileList | File[]) => {
+    const fileList = Array.from(files);
+    if (fileList.length === 0) return;
 
     setUploading(true);
-    try {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result as string;
-        const type = file.type.startsWith('video') ? 'video' : 'image';
-        const folder = selectedFolder === 'All' ? 'General' : selectedFolder;
+    const targetFolder = selectedFolder === 'All' ? 'General' : selectedFolder;
 
-        await uploadMedia(file.name, base64, folder, type);
-        onRefresh();
-        setUploading(false);
-        if (fileInputRef.current) fileInputRef.current.value = '';
-      };
-      reader.readAsDataURL(file);
-    } catch (err: any) {
-      alert(err.message || 'Error uploading file');
-      setUploading(false);
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+      setUploadProgress(`Uploading ${i + 1} of ${fileList.length}: ${file.name}`);
+      try {
+        if (file.type.startsWith('image/')) {
+          const optimized = await optimizeDeviceImage(file);
+          await uploadMedia(optimized.name, optimized.base64, targetFolder, 'image');
+        } else {
+          // Video or other
+          await new Promise<void>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = async () => {
+              try {
+                const base64 = reader.result as string;
+                await uploadMedia(file.name, base64, targetFolder, 'video');
+                resolve();
+              } catch (err) {
+                reject(err);
+              }
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        }
+      } catch (err: any) {
+        console.error('Error uploading file', file.name, err);
+      }
+    }
+
+    onRefresh();
+    setUploading(false);
+    setUploadProgress('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleUploadFiles(e.target.files);
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleUploadFiles(e.dataTransfer.files);
     }
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Delete media item "${name}"?`)) return;
+    if (!confirm(`Permanently delete media asset "${name}"?`)) return;
     try {
       await deleteMedia(id);
       onRefresh();
@@ -74,7 +120,7 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({ media, onR
             Media Asset Library
           </h2>
           <p className="text-xs text-[#8A7E72] font-light mt-0.5">
-            Directly upload, organize, and copy image/video URLs for website sections and products.
+            Directly upload photos and assets from your device or camera roll to use anywhere on the website.
           </p>
         </div>
 
@@ -82,19 +128,65 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({ media, onR
           <input
             type="file"
             ref={fileInputRef}
-            onChange={handleFileUpload}
+            multiple
+            onChange={handleFileInputChange}
             accept="image/*,video/*"
             className="hidden"
           />
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="px-4 py-2.5 bg-[#DFC27D] hover:bg-[#C29B38] text-[#1C1B1A] text-xs uppercase tracking-wider font-semibold transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            className="px-5 py-2.5 bg-[#DFC27D] hover:bg-[#C29B38] text-[#1C1B1A] text-xs uppercase tracking-wider font-semibold transition-colors flex items-center gap-2 cursor-pointer disabled:opacity-50 shadow-xs"
           >
             <Upload className="w-4 h-4" />
-            <span>{uploading ? 'Uploading...' : 'Upload Media From Device'}</span>
+            <span>{uploading ? 'Uploading...' : 'Upload Photos From Device'}</span>
           </button>
         </div>
+      </div>
+
+      {/* Drag & Drop Upload Zone */}
+      <div
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+        className={`border-2 border-dashed p-6 text-center transition-all ${
+          dragActive
+            ? 'border-[#DFC27D] bg-[#DFC27D]/15'
+            : 'border-[#33302C] hover:border-[#DFC27D]/60 bg-[#242220]/60'
+        }`}
+      >
+        {uploading ? (
+          <div className="py-2 flex flex-col items-center justify-center space-y-2">
+            <RefreshCw className="w-6 h-6 text-[#DFC27D] animate-spin" />
+            <p className="text-xs text-[#EAE3D2] font-medium">{uploadProgress || 'Processing upload...'}</p>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#1C1B1A] border border-[#33302C] flex items-center justify-center text-[#DFC27D] shrink-0">
+                <Upload className="w-5 h-5" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs text-white font-medium">
+                  Quick Device Upload
+                </p>
+                <p className="text-[10px] text-[#8A7E72]">
+                  Drag and drop files here, or tap browse to select multiple photos from your device
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="px-4 py-2 bg-[#1C1B1A] hover:bg-[#2F2D2A] text-white border border-[#33302C] hover:border-[#DFC27D] text-xs uppercase tracking-wider font-medium flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <ImageIcon className="w-3.5 h-3.5 text-[#DFC27D]" />
+              <span>Browse Device Files</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Controls: Search and Folders */}
@@ -205,7 +297,7 @@ export const AdminMediaLibrary: React.FC<AdminMediaLibraryProps> = ({ media, onR
                 onClick={() => setPreviewMedia(null)}
                 className="text-[#8A7E72] hover:text-white"
               >
-                Close
+                ✕
               </button>
             </div>
 

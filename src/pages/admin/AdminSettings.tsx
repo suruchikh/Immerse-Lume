@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GlobalSettings, DesignSettings } from '../../types';
 import { updateSettings, changeAdminPassword } from '../../services/api';
 import { Save, Check, KeyRound, Globe, Palette, ShieldCheck, Mail, Instagram } from 'lucide-react';
+import { DeviceImagePicker } from '../../components/admin/DeviceImagePicker';
 
 interface AdminSettingsProps {
   settings: GlobalSettings;
@@ -227,6 +228,15 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, design, 
                 />
               </div>
             </div>
+
+            <DeviceImagePicker
+              value={globalForm.logoImage || ''}
+              onChange={(newUrl) => setGlobalForm({ ...globalForm, logoImage: newUrl })}
+              label="Brand Logo Image (Optional / Device Upload)"
+              folder="General"
+              aspectRatio="auto"
+              helperText="Upload transparent PNG or SVG logo file from your device if you prefer a graphical emblem over typographic wordmark."
+            />
 
             <div>
               <label className="block text-[11px] uppercase tracking-wider text-[#EAE3D2] mb-1">
@@ -488,22 +498,19 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, design, 
             />
           </div>
 
-          <div>
-            <label className="block text-[11px] uppercase tracking-wider text-[#EAE3D2] mb-1">
-              Social Share OpenGraph Preview Image URL
-            </label>
-            <input
-              type="text"
-              value={globalForm.seo?.ogImage || ''}
-              onChange={(e) =>
-                setGlobalForm({
-                  ...globalForm,
-                  seo: { ...globalForm.seo, ogImage: e.target.value }
-                })
-              }
-              className="w-full px-3 py-2 bg-[#1C1B1A] border border-[#33302C] text-xs text-white font-mono"
-            />
-          </div>
+          <DeviceImagePicker
+            value={globalForm.seo?.ogImage || ''}
+            onChange={(newUrl) =>
+              setGlobalForm({
+                ...globalForm,
+                seo: { ...globalForm.seo, ogImage: newUrl }
+              })
+            }
+            label="Social Share & OpenGraph Preview Image"
+            folder="Editorial"
+            aspectRatio="video"
+            helperText="Upload social sharing banner image (1200x630 landscape recommended) directly from your device."
+          />
 
           <div className="flex justify-end pt-4 border-t border-[#33302C]">
             <button

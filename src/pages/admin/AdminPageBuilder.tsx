@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PageSection } from '../../types';
 import { updateSection, createSection, deleteSection, reorderSections } from '../../services/api';
 import { Plus, Edit2, Trash2, ArrowUp, ArrowDown, Eye, EyeOff, Layout, Copy, Check, X } from 'lucide-react';
+import { DeviceImagePicker } from '../../components/admin/DeviceImagePicker';
 
 interface AdminPageBuilderProps {
   sections: PageSection[];
@@ -348,18 +349,15 @@ export const AdminPageBuilder: React.FC<AdminPageBuilderProps> = ({ sections, on
                 />
               </div>
 
-              {/* Media URL */}
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#EAE3D2] mb-1">
-                  Background or Section Image URL
-                </label>
-                <input
-                  type="text"
-                  value={editingSection.mediaUrl || ''}
-                  onChange={(e) => setEditingSection({ ...editingSection, mediaUrl: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#1C1B1A] border border-[#33302C] text-xs text-white font-mono"
-                />
-              </div>
+              {/* Section Media with Direct Device Upload */}
+              <DeviceImagePicker
+                value={editingSection.mediaUrl || ''}
+                onChange={(newUrl) => setEditingSection({ ...editingSection, mediaUrl: newUrl })}
+                label="Section Visual Media / Banner"
+                folder="Editorial"
+                aspectRatio="banner"
+                helperText="Upload cinematic editorial photo or lifestyle imagery directly from your device."
+              />
 
               {/* CTAs */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

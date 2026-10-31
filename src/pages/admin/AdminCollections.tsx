@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Collection } from '../../types';
 import { createCollection, updateCollection, deleteCollection } from '../../services/api';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Check, X } from 'lucide-react';
+import { DeviceImagePicker } from '../../components/admin/DeviceImagePicker';
 
 interface AdminCollectionsProps {
   collections: Collection[];
@@ -225,18 +226,15 @@ export const AdminCollections: React.FC<AdminCollectionsProps> = ({ collections,
                 />
               </div>
 
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#EAE3D2] mb-1">
-                  Cover Image URL
-                </label>
-                <input
-                  type="text"
-                  value={editingCollection.image || ''}
-                  onChange={(e) => setEditingCollection({ ...editingCollection, image: e.target.value })}
-                  placeholder="/src/assets/images/..."
-                  className="w-full px-3 py-2 bg-[#1C1B1A] border border-[#33302C] text-xs text-white font-mono"
-                />
-              </div>
+              {/* Collection Cover Image with Direct Device Upload */}
+              <DeviceImagePicker
+                value={editingCollection.image || ''}
+                onChange={(newUrl) => setEditingCollection({ ...editingCollection, image: newUrl })}
+                label="Collection Cover Photo"
+                folder="Collections"
+                aspectRatio="video"
+                helperText="Upload a high-resolution landscape photograph from your device for the collection card."
+              />
 
               <div className="pt-2">
                 <label className="flex items-center gap-2 cursor-pointer text-xs text-[#EAE3D2]">

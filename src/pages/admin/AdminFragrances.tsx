@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Fragrance } from '../../types';
 import { createFragrance, updateFragrance, deleteFragrance } from '../../services/api';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Check, X, Sparkles } from 'lucide-react';
+import { DeviceImagePicker } from '../../components/admin/DeviceImagePicker';
 
 interface AdminFragrancesProps {
   fragrances: Fragrance[];
@@ -381,17 +382,15 @@ export const AdminFragrances: React.FC<AdminFragrancesProps> = ({ fragrances, on
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#EAE3D2] mb-1">
-                  Image URL
-                </label>
-                <input
-                  type="text"
-                  value={editingFragrance.image || ''}
-                  onChange={(e) => setEditingFragrance({ ...editingFragrance, image: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#1C1B1A] border border-[#33302C] text-xs text-white font-mono"
-                />
-              </div>
+              {/* Fragrance Visual Image with Direct Device Upload */}
+              <DeviceImagePicker
+                value={editingFragrance.image || ''}
+                onChange={(newUrl) => setEditingFragrance({ ...editingFragrance, image: newUrl })}
+                label="Fragrance Presentation Visual"
+                folder="Fragrances"
+                aspectRatio="square"
+                helperText="Upload botanical, floral, or ambient fragrance mood photography from your device."
+              />
 
               <div className="pt-2">
                 <label className="flex items-center gap-2 cursor-pointer text-xs text-[#EAE3D2]">

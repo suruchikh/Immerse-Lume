@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Product, Fragrance, Collection } from '../../types';
 import { createProduct, updateProduct, deleteProduct, duplicateProduct } from '../../services/api';
 import { Plus, Edit2, Trash2, Copy, Check, Eye, EyeOff, ArrowUp, ArrowDown, Image as ImageIcon, Sparkles, X } from 'lucide-react';
+import { ProductGalleryManager } from '../../components/admin/ProductGalleryManager';
 
 interface AdminProductsProps {
   products: Product[];
@@ -575,23 +576,12 @@ export const AdminProducts: React.FC<AdminProductsProps> = ({
                 </div>
               </div>
 
-              {/* Image URL */}
-              <div>
-                <label className="block text-[11px] uppercase tracking-wider text-[#EAE3D2] mb-1">
-                  Product Image URLs (one per line)
-                </label>
-                <textarea
-                  rows={2}
-                  value={editingProduct.images?.join('\n') || ''}
-                  onChange={(e) =>
-                    setEditingProduct({
-                      ...editingProduct,
-                      images: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean)
-                    })
-                  }
-                  className="w-full px-3 py-2 bg-[#1C1B1A] border border-[#33302C] text-base sm:text-xs text-white font-mono"
-                />
-              </div>
+              {/* Product Photography Gallery with Direct Device Upload */}
+              <ProductGalleryManager
+                images={editingProduct.images || []}
+                onChange={(newImages) => setEditingProduct({ ...editingProduct, images: newImages })}
+                folder="Products"
+              />
 
               {/* Toggles */}
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 pt-2">
