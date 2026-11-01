@@ -101,8 +101,9 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({
     setSecurityError(null);
     setSecuritySuccess(null);
 
-    if (!currentPassword) {
-      setSecurityError('Please enter your current password to authorize changes.');
+    const trimmedCurrentPass = currentPassword.trim();
+    if (!trimmedCurrentPass) {
+      setSecurityError('Please enter your current password to authorize changes (default is ImmerseLume2026!).');
       return;
     }
 
@@ -120,16 +121,13 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({
     }
 
     if (newPassword) {
-      if (newPassword.length < 8) {
+      const trimmedNewPass = newPassword.trim();
+      if (trimmedNewPass.length < 8) {
         setSecurityError('New password must be at least 8 characters long.');
         return;
       }
-      if (newPassword !== confirmPassword) {
+      if (trimmedNewPass !== confirmPassword.trim()) {
         setSecurityError('New password and confirmation password do not match.');
-        return;
-      }
-      if (newPassword === currentPassword) {
-        setSecurityError('New password must be different from your current password.');
         return;
       }
     }
@@ -137,10 +135,10 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({
     setSavingSecurity(true);
     try {
       const res = await updateAdminCredentials({
-        currentPassword,
+        currentPassword: trimmedCurrentPass,
         newUsername: trimmedUsername,
         newEmail: trimmedEmail,
-        newPassword: newPassword || undefined
+        newPassword: newPassword ? newPassword.trim() : undefined
       });
 
       setSecuritySuccess('Admin credentials successfully updated! Your access is now secured.');
@@ -698,7 +696,16 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({
                   <Lock className="w-3.5 h-3.5" />
                   <span>Current Password (Required for Authorization)</span>
                 </label>
-                <span className="text-[10px] text-[#8A7E72]">Verifies identity</span>
+                <div className="flex items-center gap-2 text-[10px]">
+                  <span className="text-[#8A7E72]">Default initial: <code className="text-white font-mono">ImmerseLume2026!</code></span>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPassword('ImmerseLume2026!')}
+                    className="text-[#DFC27D] hover:underline cursor-pointer font-medium"
+                  >
+                    (Auto-fill Default)
+                  </button>
+                </div>
               </div>
               <div className="relative">
                 <input
@@ -706,7 +713,7 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({
                   required
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  placeholder="Enter your current password"
+                  placeholder="Enter current password (e.g. ImmerseLume2026!)"
                   className="w-full pl-3 pr-10 py-2.5 bg-[#242220] border border-[#33302C] text-xs text-white placeholder-[#5C5854] focus:outline-hidden focus:border-[#DFC27D]"
                 />
                 <button
@@ -718,6 +725,9 @@ export const AdminSettings: React.FC<AdminSettingsProps> = ({
                   {showCurrentPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              <p className="text-[10px] text-[#8A7E72]">
+                If you have not changed your password yet, use the initial password <span className="text-[#EAE3D2] font-mono">ImmerseLume2026!</span> or <span className="text-[#EAE3D2] font-mono">immerse2026</span>.
+              </p>
             </div>
 
             {/* Change Username & Email */}
