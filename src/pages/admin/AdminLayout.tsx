@@ -55,7 +55,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     { id: 'page_builder', label: 'Page Builder', icon: Layout },
     { id: 'media', label: 'Media Library', icon: ImageIcon },
     { id: 'enquiries', label: 'Enquiries', icon: Mail, badge: newEnquiriesCount },
-    { id: 'settings', label: 'Brand & Design', icon: Settings },
+    { id: 'settings', label: 'Settings & Security', icon: Settings },
     { id: 'supabase', label: 'Database Hub', icon: Database },
   ];
 

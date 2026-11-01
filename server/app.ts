@@ -716,7 +716,11 @@ app.post('/api/auth/login', (req: Request, res: Response) => {
   }
 
   const admin = db.adminUser;
-  if (username !== admin.username) {
+  const inputIdentifier = String(username).trim().toLowerCase();
+  const currentUsername = (admin.username || '').toLowerCase();
+  const currentEmail = (admin.email || '').toLowerCase();
+
+  if (inputIdentifier !== currentUsername && inputIdentifier !== currentEmail) {
     return res.status(401).json({ error: 'Invalid username or password' });
   }
 
@@ -754,6 +758,66 @@ app.get('/api/auth/me', authenticateAdmin, (req: Request, res: Response) => {
   });
 });
 
+app.post('/api/auth/change-credentials', authenticateAdmin, (req: Request, res: Response) => {
+  const { currentPassword, newUsername, newEmail, newPassword } = req.body;
+
+  if (!currentPassword) {
+    return res.status(400).json({ error: 'Current password is required to update credentials' });
+  }
+
+  if (!newUsername && !newEmail && !newPassword) {
+    return res.status(400).json({ error: 'Please provide at least one credential to update (username, email, or password)' });
+  }
+
+  const isMatch = bcrypt.compareSync(currentPassword, db.adminUser.passwordHash);
+  if (!isMatch) {
+    return res.status(401).json({ error: 'Current password does not match' });
+  }
+
+  if (newUsername) {
+    const trimmed = String(newUsername).trim();
+    if (trimmed.length < 3) {
+      return res.status(400).json({ error: 'New username must be at least 3 characters long' });
+    }
+    db.adminUser.username = trimmed;
+  }
+
+  if (newEmail) {
+    const trimmed = String(newEmail).trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      return res.status(400).json({ error: 'Please enter a valid email address' });
+    }
+    db.adminUser.email = trimmed;
+  }
+
+  if (newPassword) {
+    if (String(newPassword).length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters long' });
+    }
+    db.adminUser.passwordHash = bcrypt.hashSync(newPassword, 10);
+  }
+
+  saveDatabase(db);
+
+  const token = jwt.sign(
+    { id: db.adminUser.id, username: db.adminUser.username, role: db.adminUser.role },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  return res.json({
+    success: true,
+    message: 'Admin credentials successfully updated',
+    token,
+    user: {
+      id: db.adminUser.id,
+      username: db.adminUser.username,
+      email: db.adminUser.email,
+      role: db.adminUser.role
+    }
+  });
+});
+
 app.post('/api/auth/change-password', authenticateAdmin, (req: Request, res: Response) => {
   const { currentPassword, newPassword } = req.body;
   if (!currentPassword || !newPassword) {
@@ -771,7 +835,24 @@ app.post('/api/auth/change-password', authenticateAdmin, (req: Request, res: Res
 
   db.adminUser.passwordHash = bcrypt.hashSync(newPassword, 10);
   saveDatabase(db);
-  return res.json({ success: true, message: 'Password successfully updated' });
+
+  const token = jwt.sign(
+    { id: db.adminUser.id, username: db.adminUser.username, role: db.adminUser.role },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  return res.json({
+    success: true,
+    message: 'Password successfully updated',
+    token,
+    user: {
+      id: db.adminUser.id,
+      username: db.adminUser.username,
+      email: db.adminUser.email,
+      role: db.adminUser.role
+    }
+  });
 });
 
 // Products endpoints

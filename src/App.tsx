@@ -301,6 +301,8 @@ export default function App() {
           <AdminSettings
             settings={settings}
             design={design}
+            adminUser={adminUser}
+            onUserUpdate={(updatedUser) => setAdminUser(updatedUser)}
             onRefresh={() => loadData(true)}
           />
         )}

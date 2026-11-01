@@ -29,9 +29,17 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
   };
 
   const fillDemoCredentials = () => {
-    setUsername('admin');
-    setPassword('ImmerseLume2026!');
+    const customUser = localStorage.getItem('immerse_lume_admin_custom_username') || 'admin';
+    const customPass = localStorage.getItem('immerse_lume_admin_custom_password') || 'ImmerseLume2026!';
+    setUsername(customUser);
+    setPassword(customPass);
   };
+
+  const hasCustomCreds = Boolean(
+    localStorage.getItem('immerse_lume_admin_custom_password') ||
+    localStorage.getItem('immerse_lume_admin_custom_username')
+  );
+  const activeUserDisplay = localStorage.getItem('immerse_lume_admin_custom_username') || 'admin';
 
   return (
     <div className="min-h-screen bg-[#1C1B1A] flex flex-col justify-center items-center px-4 py-12 relative text-left">
@@ -120,7 +128,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
           <div className="flex items-center justify-between">
             <span className="text-[10px] uppercase tracking-widest text-[#DFC27D] font-medium flex items-center gap-1.5">
               <Sparkles className="w-3 h-3" />
-              <span>Initial Credentials</span>
+              <span>{hasCustomCreds ? 'Configured Access' : 'Initial Access'}</span>
             </span>
             <button
               onClick={fillDemoCredentials}
@@ -130,11 +138,11 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
             </button>
           </div>
           <div className="text-[11px] text-[#8A7E72] font-mono space-y-0.5">
-            <div>User: <span className="text-white">admin</span></div>
-            <div>Pass: <span className="text-white">ImmerseLume2026!</span></div>
+            <div>User: <span className="text-white">{activeUserDisplay}</span></div>
+            <div>Pass: <span className="text-white">{hasCustomCreds ? '••••••••••••' : 'ImmerseLume2026!'}</span></div>
           </div>
           <p className="text-[10px] text-[#5C5854] italic">
-            You can securely change this password at any time in the Admin Settings.
+            You can change your username, email, and password anytime in Settings & Security.
           </p>
         </div>
       </div>

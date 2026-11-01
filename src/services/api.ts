@@ -12,6 +12,8 @@ import {
 const TOKEN_KEY = 'immerse_lume_admin_token';
 const ADMIN_USER_KEY = 'immerse_lume_admin_user';
 const ADMIN_PASS_KEY = 'immerse_lume_admin_custom_password';
+const ADMIN_USERNAME_KEY = 'immerse_lume_admin_custom_username';
+const ADMIN_EMAIL_KEY = 'immerse_lume_admin_custom_email';
 
 export function getAuthToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
@@ -65,22 +67,41 @@ export async function loginUser(username: string, password: string) {
       const data = await res.json();
       setAuthToken(data.token);
       localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(data.user));
+      if (data.user?.username) {
+        localStorage.setItem(ADMIN_USERNAME_KEY, data.user.username);
+      }
+      if (data.user?.email) {
+        localStorage.setItem(ADMIN_EMAIL_KEY, data.user.email);
+      }
       return data;
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      if (res.status === 401) {
+        throw new Error(errData.error || 'Invalid username or password');
+      }
     }
-  } catch (err) {
+  } catch (err: any) {
+    if (err.message && err.message.includes('Invalid username or password')) {
+      throw err;
+    }
     console.warn('API login request failed, evaluating client fallback:', err);
   }
 
   // Client-side fallback authentication for Vercel static/serverless resiliency
-  const customPassword = localStorage.getItem(ADMIN_PASS_KEY);
-  const validPassword = customPassword || 'ImmerseLume2026!';
+  const customUsername = localStorage.getItem(ADMIN_USERNAME_KEY) || 'admin';
+  const customEmail = localStorage.getItem(ADMIN_EMAIL_KEY) || 'admin@immerselume.com';
+  const customPassword = localStorage.getItem(ADMIN_PASS_KEY) || 'ImmerseLume2026!';
 
-  if (username === 'admin' && password === validPassword) {
+  const inputId = username.trim().toLowerCase();
+  const validUser = (inputId === customUsername.toLowerCase() || inputId === customEmail.toLowerCase());
+  const validPass = password === customPassword;
+
+  if (validUser && validPass) {
     const fallbackToken = 'immerse_client_admin_token_' + Date.now();
     const fallbackUser = {
       id: 'admin_1',
-      username: 'admin',
-      email: 'admin@immerselume.com',
+      username: customUsername,
+      email: customEmail,
       role: 'super_admin'
     };
     setAuthToken(fallbackToken);
@@ -101,6 +122,9 @@ export async function fetchCurrentUser() {
     });
     if (res.ok) {
       const data = await res.json();
+      if (data.user) {
+        localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(data.user));
+      }
       return data;
     }
   } catch (err) {
@@ -114,33 +138,106 @@ export async function fetchCurrentUser() {
     } catch (e) {}
   }
 
+  const customUsername = localStorage.getItem(ADMIN_USERNAME_KEY) || 'admin';
+  const customEmail = localStorage.getItem(ADMIN_EMAIL_KEY) || 'admin@immerselume.com';
+
   // Return fallback admin if token exists
   return {
     user: {
       id: 'admin_1',
-      username: 'admin',
-      email: 'admin@immerselume.com',
+      username: customUsername,
+      email: customEmail,
       role: 'super_admin'
     }
   };
 }
 
-export async function changeAdminPassword(currentPassword: string, newPassword: string) {
-  try {
-    const res = await fetch('/api/auth/change-password', {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ currentPassword, newPassword })
-    });
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.warn('API change-password failed, saving in localStorage fallback:', err);
+export interface UpdateCredentialsPayload {
+  currentPassword: string;
+  newUsername?: string;
+  newEmail?: string;
+  newPassword?: string;
+}
+
+export async function updateAdminCredentials(payload: UpdateCredentialsPayload) {
+  const { currentPassword, newUsername, newEmail, newPassword } = payload;
+  if (!currentPassword) {
+    throw new Error('Current password is required to verify your identity');
   }
 
-  localStorage.setItem(ADMIN_PASS_KEY, newPassword);
-  return { success: true, message: 'Password updated successfully' };
+  try {
+    const res = await fetch('/api/auth/change-credentials', {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        currentPassword,
+        newUsername: newUsername || undefined,
+        newEmail: newEmail || undefined,
+        newPassword: newPassword || undefined
+      })
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to update admin credentials');
+    }
+
+    if (data.token) {
+      setAuthToken(data.token);
+    }
+    if (data.user) {
+      localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(data.user));
+    }
+    if (newUsername) {
+      localStorage.setItem(ADMIN_USERNAME_KEY, newUsername.trim());
+    }
+    if (newEmail) {
+      localStorage.setItem(ADMIN_EMAIL_KEY, newEmail.trim());
+    }
+    if (newPassword) {
+      localStorage.setItem(ADMIN_PASS_KEY, newPassword);
+    }
+
+    return data;
+  } catch (err: any) {
+    // If it was an explicit server validation error (e.g. wrong current password) re-throw it
+    if (err.message && !err.message.includes('fetch') && !err.message.includes('network')) {
+      throw err;
+    }
+
+    console.warn('API updateAdminCredentials unreachable, checking fallback:', err);
+    // Offline / client fallback handler
+    const currentStoredPass = localStorage.getItem(ADMIN_PASS_KEY) || 'ImmerseLume2026!';
+    if (currentPassword !== currentStoredPass) {
+      throw new Error('Current password does not match');
+    }
+
+    const currentStoredUser = localStorage.getItem(ADMIN_USERNAME_KEY) || 'admin';
+    const currentStoredEmail = localStorage.getItem(ADMIN_EMAIL_KEY) || 'admin@immerselume.com';
+
+    const updatedUser = {
+      id: 'admin_1',
+      username: newUsername ? newUsername.trim() : currentStoredUser,
+      email: newEmail ? newEmail.trim() : currentStoredEmail,
+      role: 'super_admin'
+    };
+
+    if (newUsername) localStorage.setItem(ADMIN_USERNAME_KEY, updatedUser.username);
+    if (newEmail) localStorage.setItem(ADMIN_EMAIL_KEY, updatedUser.email);
+    if (newPassword) localStorage.setItem(ADMIN_PASS_KEY, newPassword);
+    localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(updatedUser));
+
+    return {
+      success: true,
+      message: 'Admin credentials successfully updated',
+      user: updatedUser
+    };
+  }
+}
+
+export async function changeAdminPassword(currentPassword: string, newPassword: string) {
+  return updateAdminCredentials({ currentPassword, newPassword });
 }
 
 // ---------------- PRODUCTS API ----------------
