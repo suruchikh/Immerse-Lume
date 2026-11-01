@@ -78,7 +78,6 @@ export default function App() {
 
   // Auth State
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
-  const [initialLoading, setInitialLoading] = useState(true);
 
   // Modals
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -120,11 +119,6 @@ export default function App() {
   useEffect(() => {
     let isMounted = true;
 
-    // Safety timeout: dismiss luxury splash after 600ms so website never gets stuck
-    const splashTimer = setTimeout(() => {
-      if (isMounted) setInitialLoading(false);
-    }, 600);
-
     async function init() {
       try {
         const user = await fetchCurrentUser();
@@ -136,8 +130,6 @@ export default function App() {
         }
       } catch (err) {
         if (isMounted) await loadData(false);
-      } finally {
-        if (isMounted) setInitialLoading(false);
       }
     }
     init();
@@ -183,7 +175,6 @@ export default function App() {
 
     return () => {
       isMounted = false;
-      clearTimeout(splashTimer);
       window.removeEventListener('popstate', handlePopState);
     };
   }, []);
@@ -232,20 +223,6 @@ export default function App() {
     setCurrentPath('/');
     loadData(false);
   };
-
-  if (initialLoading) {
-    return (
-      <div className="min-h-screen bg-[#FDFBF7] flex flex-col items-center justify-center space-y-4 transition-opacity duration-500">
-        <span className="font-serif text-2xl tracking-[0.24em] uppercase text-[#1C1B1A]">
-          IMMERSE LUME
-        </span>
-        <div className="w-12 h-[1px] bg-[#C29B38] animate-pulse" />
-        <span className="text-[11px] uppercase tracking-[0.2em] text-[#8A7E72]">
-          Elevate Every Moment
-        </span>
-      </div>
-    );
-  }
 
   // ---------------- ADMIN PANEL ROUTE ----------------
   if (currentPath.startsWith('/admin')) {
