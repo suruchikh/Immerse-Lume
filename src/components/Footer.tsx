@@ -164,13 +164,6 @@ export const Footer: React.FC<FooterProps> = ({ settings, collections, onNavigat
             <span>Handcrafted in India</span>
             <span>·</span>
             <span>Natural Soy Wax</span>
-            <span>·</span>
-            <button
-              onClick={() => onNavigate('/admin')}
-              className="text-[#8A7E72] hover:text-[#DFC27D] transition-colors cursor-pointer"
-            >
-              Admin Portal
-            </button>
           </div>
         </div>
       </div>

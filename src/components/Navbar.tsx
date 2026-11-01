@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GlobalSettings, Collection } from '../types';
-import { Menu, X, ChevronDown, Sparkles, Send, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Menu, X, ChevronDown, Sparkles, Send, ArrowRight } from 'lucide-react';
 
 interface NavbarProps {
   currentPath: string;
@@ -138,20 +138,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, setting
             })}
           </nav>
 
-          {/* Zone 3: Desktop Action & Admin Link */}
+          {/* Zone 3: Desktop Action */}
           <div className="hidden lg:flex items-center gap-4 shrink-0">
             <button
               onClick={() => handleNavClick('/contact')}
               className="px-5 py-2.5 text-xs font-medium uppercase tracking-[0.16em] text-[#1C1B1A] border border-[#1C1B1A] hover:bg-[#1C1B1A] hover:text-[#FDFBF7] transition-all duration-200 cursor-pointer whitespace-nowrap"
             >
               Concierge Enquiry
-            </button>
-            <button
-              onClick={() => handleNavClick('/admin')}
-              className="text-[11px] text-[#8A7E72] hover:text-[#1C1B1A] uppercase tracking-[0.18em] transition-colors cursor-pointer whitespace-nowrap px-2 py-1"
-              title="Open Admin Dashboard"
-            >
-              Admin
             </button>
           </div>
 
@@ -249,21 +242,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentPath, onNavigate, setting
             </nav>
 
             {/* Mobile Actions */}
-            <div className="pt-6 space-y-3">
+            <div className="pt-6">
               <button
                 onClick={() => handleNavClick('/contact')}
                 className="w-full min-h-[48px] py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] bg-[#1C1B1A] text-[#FDFBF7] flex items-center justify-center gap-2 active:bg-[#323827]"
               >
                 <Send className="w-3.5 h-3.5 text-[#DFC27D]" />
                 <span>Concierge Enquiry</span>
-              </button>
-
-              <button
-                onClick={() => handleNavClick('/admin')}
-                className="w-full min-h-[44px] py-2.5 text-center text-xs tracking-wider text-[#8A7E72] hover:text-[#1C1B1A] border border-[#EAE3D2] flex items-center justify-center gap-2 bg-[#F5EFEB]/50"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-[#C29B38]" />
-                <span>Admin Management Portal</span>
               </button>
             </div>
           </div>
